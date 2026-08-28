@@ -122,7 +122,8 @@ def ust_header(aktif=""):
 <header><div class="kap">
   <a class="logo" href="/" aria-label="{e(S["ad"])} ana sayfa">
     <img src="/assets/img/logo-900.webp" srcset="/assets/img/logo-500.webp 500w, /assets/img/logo-900.webp 900w"
-         sizes="181px" alt="{e(S["ad"])} logosu" width="181" height="64" fetchpriority="high">
+         sizes="(max-width:820px) 198px, 362px" alt="{e(S["ad"])} logosu"
+         width="362" height="128" fetchpriority="high">
   </a>
   <button class="mnu" aria-label="Menü" aria-expanded="false"><span></span><span></span><span></span></button>
   <nav class="ana">{baglar}{tel_btn("btn btn-altin btn-sm")}</nav>

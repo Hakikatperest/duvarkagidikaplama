@@ -15,6 +15,22 @@
     });
   }
 
+  /* ── Kaydırınca menü kompaktlaşır ───────────────────────────────────────────
+     Logo üstte iri duruyor; sayfa kaydırıldığında sticky menü ekranın büyük
+     kısmını yemesin diye küçülüyor. rAF ile sınırlanıyor, scroll'da iş yapılmıyor. */
+  var ust = document.querySelector('header');
+  if (ust) {
+    var bekliyor = false;
+    var guncelle = function () {
+      ust.classList.toggle('kucuk', window.scrollY > 60);
+      bekliyor = false;
+    };
+    window.addEventListener('scroll', function () {
+      if (!bekliyor) { bekliyor = true; window.requestAnimationFrame(guncelle); }
+    }, { passive: true });
+    guncelle();
+  }
+
   /* ── Görünürlük animasyonu ──────────────────────────────────────────────── */
   var hedefler = document.querySelectorAll('.gel');
   if (hedefler.length) {
