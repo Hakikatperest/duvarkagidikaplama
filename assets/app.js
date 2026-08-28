@@ -30,6 +30,58 @@
     }
   }
 
+  /* ── Galeri büyütme ─────────────────────────────────────────────────────────
+     Kütüphane yok. Katman ilk tıklamada kuruluyor; Esc ve zemine tıklama
+     kapatıyor, odak tıklanan karta geri veriliyor (klavye kullanıcısı listede
+     kaybolmasın).                                                            */
+  var kartlar = document.querySelectorAll('.galeri .gk');
+  if (kartlar.length) {
+    var katman = null, sonKart = null;
+
+    function kur() {
+      katman = document.createElement('div');
+      katman.className = 'lb';
+      katman.setAttribute('role', 'dialog');
+      katman.setAttribute('aria-modal', 'true');
+      katman.innerHTML = '<button class="lb-kapat" type="button" aria-label="Kapat">&times;</button>' +
+                         '<div><img alt=""><div class="lb-ad"></div></div>';
+      katman.style.display = 'none';   // .lb display:grid; açılana kadar ekranı kaplamasın
+      document.body.appendChild(katman);
+
+      katman.addEventListener('click', function (e) {
+        if (e.target === katman || e.target.closest('.lb-kapat')) kapat();
+      });
+    }
+
+    function ac(kart) {
+      if (!katman) kur();
+      sonKart = kart;
+      var img = katman.querySelector('img');
+      img.src = kart.dataset.buyuk;
+      img.alt = kart.dataset.alt || '';
+      katman.querySelector('.lb-ad').textContent = kart.dataset.alt || '';
+      katman.style.display = 'grid';
+      document.body.classList.add('lb-acik');
+      requestAnimationFrame(function () { katman.classList.add('acik'); });
+      katman.querySelector('.lb-kapat').focus();
+    }
+
+    function kapat() {
+      if (!katman) return;
+      katman.classList.remove('acik');
+      document.body.classList.remove('lb-acik');
+      setTimeout(function () { katman.style.display = 'none'; }, 220);
+      if (sonKart) { sonKart.focus(); sonKart = null; }
+    }
+
+    kartlar.forEach(function (k) {
+      k.addEventListener('click', function () { ac(k); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && katman && katman.classList.contains('acik')) kapat();
+    });
+  }
+
   /* ── Fiyat hesaplayıcı ──────────────────────────────────────────────────────
      Rulo sayısı YUKARI yuvarlanır: yarım rulo diye bir şey yok, 15,6 m²'lik
      duvar için 2 rulo alınır. Sonuç "yaklaşık" olarak sunulur — desen raporu

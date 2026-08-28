@@ -230,18 +230,70 @@ def hesaplayici():
 </div>'''
 
 
-def galeri(baslik="Duvar Kağıdı Modelleri"):
-    modeller = [(f"model-duvarkagidi{i}", ad) for i, ad in enumerate(
-        ["Salon için desenli duvar kağıdı", "Yatak odası duvar kağıdı modeli",
-         "Modern geometrik duvar kağıdı", "Doğal doku duvar kağıdı",
-         "Çiçek desenli duvar kağıdı", "Klasik desen duvar kağıdı",
-         "3D görünümlü duvar kağıdı"], start=1)]
-    mevcut = [(t, a) for t, a in modeller if os.path.exists(os.path.join(KOK, "assets", "img", f"{t}-500.webp"))]
-    ic = "".join(f'<figure>{gorsel(t, a, boy="(min-width:820px) 270px, 45vw")}'
-                 f'<figcaption>{e(a)}</figcaption></figure>' for t, a in mevcut)
+# Görsellerin gerçek içeriğine göre adlandırıldı (tek tek bakılarak doğrulandı).
+MODELLER = [
+    ("model-duvarkagidi1", "Taş desenli duvar kağıdı"),
+    ("model-duvarkagidi2", "Ahşap model duvar kağıdı"),
+    ("model-duvarkagidi3", "Balık desenli duvar kağıdı"),
+    ("model-duvarkagidi4", "3D kabartma duvar kağıdı"),
+    ("model-duvarkagidi5", "Modern tasarım duvar kağıdı"),
+    ("model-duvarkagidi6", "Geometrik desenli duvar kağıdı"),
+    ("model-duvarkagidi7", "Çiçek ve kuş desenli duvar kağıdı"),
+]
+
+
+def galeri(baslik="Duvar Kağıdı Modelleri", giris=None):
+    """Model galerisi — her kart tıklanınca büyür (JS'siz de görsel görünür).
+
+    Kartlar <button>: klavyeyle de açılabilsin ve ekran okuyucu tıklanabilir
+    olduğunu bilsin. Büyük görsel data-buyuk'ta; küçük türev zaten yüklüyken
+    büyüğü ancak tıklanınca indiriliyor.
+    """
+    mevcut = [(t, a) for t, a in MODELLER
+              if os.path.exists(os.path.join(KOK, "assets", "img", f"{t}-500.webp"))]
+    ic = "".join(
+        f'<button type="button" class="gk" data-buyuk="/assets/img/{t}-900.webp" data-alt="{e(a)}" '
+        f'aria-label="{e(a)} — büyüt">'
+        f'{gorsel(t, a, boy="(min-width:820px) 270px, 45vw")}'
+        f'<span class="gk-ad">{e(a)}</span>'
+        f'<span class="gk-buyut" aria-hidden="true">'
+        f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
+        f'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg></span>'
+        f'</button>' for t, a in mevcut)
+    alt = giris or ("Binlerce desen arasından mekânınıza uyanı birlikte seçiyoruz. "
+                    "Görsele tıklayın, büyük hâlini görün. Kataloğun tamamını keşifte gösteriyorum.")
     return f'''<div class="bolum-bas"><span class="etiket">Modeller</span><h2>{e(baslik)}</h2>
-  <p>Binlerce desen arasından mekânınıza uyanı birlikte seçiyoruz. Kataloğun tamamını keşifte gösteriyorum.</p></div>
+  <p>{e(alt)}</p></div>
 <div class="galeri gel">{ic}</div>'''
+
+
+# ── Sayfalara görsel/video dağıtımı ─────────────────────────────────────────
+# Aynı görsel her sayfada tekrarlanmasın diye ilçe sırasına göre döndürülüyor;
+# böylece hem sayfalar birbirinden ayrışıyor hem yüklenen 21 görselin tamamı
+# sitede kullanılıyor.
+HERO_HAVUZU = ["duvar-kagidi-firmasi", "duvar-kagidi-kaplama", "duvar-kagidi-yapan-yer",
+               "duvar-kagidi-ustasi", "duvar-kagidi-renkleri", "duvar-kagidi-kaplama-fiyatlari",
+               "duvar-kagidi-fiyatlari"]
+GOVDE_HAVUZU = [("silinebilir-duvar-kagidi", "Silinebilir yüzeyli duvar kağıdı"),
+                ("tas-desenli-duvar-kagidi", "Taş desenli duvar kağıdı uygulaması"),
+                ("ahsap-desenli-duvar-kagidi", "Ahşap desenli duvar kağıdı"),
+                ("3boyutlu-duvar-kagidi", "3 boyutlu görünümlü duvar kağıdı"),
+                ("renkli-duvar-kagidi", "Renkli duvar kağıdı seçenekleri"),
+                ("mutfak-duvar-kagidi", "Mutfakta duvar kağıdı uygulaması"),
+                ("tas-desenli-duvar-kagidi2", "Taş dokulu duvar kağıdı")]
+
+
+def video_bolum(baslik="Uygulamayı İzleyin", metin=None):
+    alt = metin or ("Kısa bir video: duvar hazırlığından teslime kadar bir duvar kağıdı "
+                    "uygulaması nasıl ilerliyor.")
+    return f'''<div class="bolum-bas"><span class="etiket">Uygulama</span><h2>{e(baslik)}</h2>
+  <p>{e(alt)}</p></div>
+<div class="video-kutu gel">
+  <video controls preload="none" playsinline poster="/assets/img/duvar-kagidi-kaplama-900.webp">
+    <source src="/video/duvar-kagidi-kaplama.mp4" type="video/mp4">
+    Tarayıcınız video oynatmayı desteklemiyor.
+  </video>
+</div>'''
 
 
 def sss_bolum(sorular, baslik="Sık Sorulan Sorular"):
@@ -471,17 +523,7 @@ def anasayfa():
 </section>
 
 <section>
-  <div class="kap">
-    <div class="bolum-bas"><span class="etiket">Uygulama</span><h2>İşi Yaparken Nasıl Çalışıyorum?</h2>
-      <p>Kısa bir video: hazırlıktan teslime kadar bir duvar kağıdı uygulaması.</p></div>
-    <div class="video-kutu gel">
-      <video controls preload="none" playsinline
-             poster="/assets/img/duvar-kagidi-kaplama-900.webp">
-        <source src="/video/duvar-kagidi-kaplama.mp4" type="video/mp4">
-        Tarayıcınız video oynatmayı desteklemiyor.
-      </video>
-    </div>
-  </div>
+  <div class="kap">{video_bolum("İşi Yaparken Nasıl Çalışıyorum?")}</div>
 </section>
 
 <section class="acik" id="kullanim-alanlari">
@@ -546,6 +588,10 @@ def ilce_sss(i):
 
 def ilce_sayfasi(i):
     ad, slug = i["ad"], i["slug"]
+    sira = D.ILCELER.index(i)
+    hero_g = HERO_HAVUZU[sira % len(HERO_HAVUZU)]
+    govde_g, govde_alt = GOVDE_HAVUZU[sira % len(GOVDE_HAVUZU)]
+    videolu = sira % 3 == 0          # 39 ilçenin 13'ünde video
     yol = f"/{slug}-duvar-kagidi-kaplama/"
     mahalle = ", ".join(i["mahalle"])
     komsular = [k for k in D.ILCELER if k["slug"] in i["komsu"]]
@@ -577,7 +623,7 @@ def ilce_sayfasi(i):
         kirp(f"{ad}'de duvar kağıdı kaplama, duvar kaplama ve duvar kağıdı ustası. "
              f"Rulo {tl(D.RULO_SATIS)}'den, işçilik {tl(D.RULO_ISCILIK)}. {ad}'e ücretsiz keşif, "
              f"yazılı fiyat. Hemen arayın: {S['tel']}"),
-        yol, "duvar-kagidi-kaplama", schema) + ust_header() + f'''
+        yol, hero_g, schema) + ust_header() + f'''
 <div class="hero" style="padding:44px 0 52px">
   <div class="kap">
     <div class="yazi">
@@ -589,7 +635,7 @@ def ilce_sayfasi(i):
       <div class="dugmeler">{tel_btn("btn btn-altin", "Hemen Ara: " + S["tel"])}{wa_btn()}</div>
     </div>
     <div class="hero-gorsel">
-      <figure>{gorsel("duvar-kagidi-firmasi", f"{ad}'de duvar kağıdı kaplama uygulaması",
+      <figure>{gorsel(hero_g, f"{ad}'de duvar kağıdı kaplama uygulaması",
                       boy="(min-width:1000px) 520px, 100vw", oncelik=True)}</figure>
       <div class="hero-rozet"><div class="b1">{e(ad)}</div><div class="b2">ÜCRETSİZ KEŞİF</div>
         <div class="b3">Ölçü + yazılı fiyat</div></div>
@@ -620,6 +666,11 @@ def ilce_sayfasi(i):
     <p>{e(mahalle)} ve çevresindeki bütün mahallelere gidiyorum. {e(ad)} merkezine yakın işlerde
     çoğu zaman aynı hafta içinde randevu verebiliyorum; keşif ile uygulama arasında ürün seçimi
     için birkaç gün bırakıyoruz.</p>
+
+    <figure style="margin:30px 0">
+      {gorsel(govde_g, f"{govde_alt} — {ad}", boy="(min-width:1000px) 800px, 100vw")}
+      <figcaption style="font-size:13.5px;color:var(--soluk);margin-top:9px">{e(govde_alt)}</figcaption>
+    </figure>
 
     <h2>{e(ad)} Duvar Kağıdı Satan Yerler</h2>
     <p>{e(ad)}'de duvar kağıdı satan yer ararken şuna dikkat edin: ürünü satan yer ile uygulayan
@@ -688,6 +739,13 @@ def ilce_sayfasi(i):
 </section>
 
 <section class="acik">
+  <div class="kap">{galeri(f"{ad} İçin Duvar Kağıdı Modelleri",
+    f"{ad}'de en çok tercih edilen desenlerden bir seçki. Görsele tıklayın, büyük hâlini görün.")}</div>
+</section>
+
+{f'<section><div class="kap">' + video_bolum() + '</div></section>' if videolu else ''}
+
+<section{'' if videolu else ' class="acik"'}>
   <div class="kap">
     <div class="bolum-bas"><span class="etiket">Kullanım Alanları</span>
       <h2>{e(ad)}'de Hangi Mekânlara Duvar Kağıdı Yapıyorum?</h2>
@@ -740,8 +798,16 @@ ALAN_GORSEL = {
 }
 
 
+# Videonun konulduğu kullanım alanları: uygulamanın nasıl gittiğini görmek
+# karar aşamasında en çok bu mekânlarda soruluyor.
+VIDEOLU_ALANLAR = {"ofis-duvar-kagidi", "magaza-duvar-kagidi", "otel-duvar-kagidi",
+                   "restoran-kafe-duvar-kagidi", "ev-duvar-kagidi"}
+
+
 def alan_sayfasi(a):
     yol = f"/{a['slug']}/"
+    sira = D.ALANLAR.index(a)
+    govde_g, govde_alt = GOVDE_HAVUZU[sira % len(GOVDE_HAVUZU)]
     kapsam_ic = "".join(f"<li>{e(k)}</li>" for k in a["kapsam"])
     ilce_link = "".join(
         f'<a href="/{i["slug"]}-duvar-kagidi-kaplama/"><span>›</span>{e(i["ad"])}</a>'
@@ -801,6 +867,11 @@ def alan_sayfasi(a):
     <h3>Bu sayfa hangi işleri kapsıyor?</h3>
     <ul>{kapsam_ic}</ul>
 
+    <figure style="margin:30px 0">
+      {gorsel(govde_g, f"{govde_alt} — {a['ad'].lower()}", boy="(min-width:1000px) 800px, 100vw")}
+      <figcaption style="font-size:13.5px;color:var(--soluk);margin-top:9px">{e(govde_alt)}</figcaption>
+    </figure>
+
     <h3>Nasıl ilerliyoruz?</h3>
     <ol>
       <li><strong>Telefon:</strong> Ne yaptırmak istediğinizi ve kabaca ölçüyü konuşuyoruz.
@@ -824,6 +895,13 @@ def alan_sayfasi(a):
 </section>
 
 <section>
+  <div class="kap">{galeri("Duvar Kağıdı Modelleri",
+    "Bu mekânlarda en çok tercih edilen desenler. Görsele tıklayın, büyük hâlini görün.")}</div>
+</section>
+
+{f'<section class="acik"><div class="kap">' + video_bolum() + '</div></section>' if a["slug"] in VIDEOLU_ALANLAR else ''}
+
+<section{' class="acik"' if a["slug"] not in VIDEOLU_ALANLAR else ''}>
   <div class="kap dar">{sss_bolum(sorular)}</div>
 </section>
 
@@ -1091,8 +1169,14 @@ sorunun sebebi. :)</p></div>
 }
 
 
+# Uygulama ve işçilik rehberlerinde video doğrudan konunun kendisi.
+VIDEOLU_REHBERLER = {"duvar-kagidi-nasil-yapistirilir", "duvar-kagidi-iscilik-fiyatlari"}
+
+
 def rehber_sayfasi(r):
     yol = f"/{r['slug']}/"
+    sira = D.REHBERLER.index(r)
+    ek_g, ek_alt = GOVDE_HAVUZU[(sira + 3) % len(GOVDE_HAVUZU)]
     govde_gorsel, govde = REHBER_GOVDE[r["slug"]]
     diger = "".join(f'<a href="/{x["slug"]}/"><span>›</span>{e(x["ad"])}</a>'
                     for x in D.REHBERLER if x["slug"] != r["slug"])
@@ -1132,10 +1216,19 @@ def rehber_sayfasi(r):
 {guven_seridi()}
 {kirinti([("/", "Ana Sayfa"), (None, r["ad"])])}
 
-<section class="acik"><div class="kap dar icerik">{govde}</div></section>
+<section class="acik"><div class="kap dar icerik">{govde}
+  <figure style="margin:34px 0 0">
+    {gorsel(ek_g, ek_alt, boy="(min-width:1000px) 800px, 100vw")}
+    <figcaption style="font-size:13.5px;color:var(--soluk);margin-top:9px">{e(ek_alt)}</figcaption>
+  </figure>
+</div></section>
 
-<section><div class="kap">{fiyat_tablosu("Güncel Fiyat Listesi")}</div></section>
-<section class="acik"><div class="kap">{hesaplayici()}</div></section>
+{f'<section><div class="kap">' + video_bolum() + '</div></section>' if r["slug"] in VIDEOLU_REHBERLER else ''}
+
+<section{' class="acik"' if r["slug"] in VIDEOLU_REHBERLER else ''}><div class="kap">{fiyat_tablosu("Güncel Fiyat Listesi")}</div></section>
+<section{'' if r["slug"] in VIDEOLU_REHBERLER else ' class="acik"'}><div class="kap">{hesaplayici()}</div></section>
+
+<section class="acik"><div class="kap">{galeri("Duvar Kağıdı Modelleri")}</div></section>
 
 <section><div class="kap">
   <div class="bolum-bas"><span class="etiket">Rehber</span><h2>Diğer Rehber Yazıları</h2></div>
