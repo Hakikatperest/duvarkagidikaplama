@@ -22,6 +22,23 @@ KOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 S = D.SITE
 
 
+def surum(yol):
+    """Dosya içeriğinden kısa sürüm damgası (?v=…).
+
+    ⚠️ Bu olmadan tarayıcı ESKİ style.css'i kullanmaya devam ediyor ama YENİ
+    HTML'i alıyor. Galeri değişikliğinde tam bunu yaşadık: stil gelmediği için
+    büyüteç ikonu akışta kaldı ve SVG varsayılan boyutunda (300×150) görselin
+    altında devasa göründü. Sürüm damgası, her içerik değişiminde adresi
+    değiştirdiği için bu durumu yapısal olarak imkânsız kılar.
+    """
+    import hashlib
+    tam = os.path.join(KOK, yol.lstrip("/"))
+    if not os.path.exists(tam):
+        return ""
+    with open(tam, "rb") as f:
+        return "?v=" + hashlib.md5(f.read()).hexdigest()[:8]
+
+
 def e(t):
     return html.escape(str(t), quote=True)
 
@@ -46,13 +63,28 @@ def kirp(metin, en_az=110, en_cok=165, ek=None):
 
 # ── Ortak parçalar ──────────────────────────────────────────────────────────
 
+_OLCU = {}
+
+
+def olcu(taban):
+    """Türevin GERÇEK ölçüsü. Sabit 900×600 yazmak kare model görsellerinde
+    yanlış oranı bildiriyor ve yerleşim kaymasına (CLS) yol açıyordu."""
+    if taban not in _OLCU:
+        from PIL import Image
+        yol = os.path.join(KOK, "assets", "img", f"{taban}-900.webp")
+        with Image.open(yol) as im:
+            _OLCU[taban] = im.size
+    return _OLCU[taban]
+
+
 def gorsel(taban, alt, sinif="", boy="(min-width:1000px) 560px, 100vw", oncelik=False):
     """srcset'li görsel. Kaynaklar 2 MB; sayfaya hep türevler girer."""
     yukleme = 'loading="eager" fetchpriority="high"' if oncelik else 'loading="lazy" decoding="async"'
+    g_en, g_boy = olcu(taban)
     return (f'<img src="/assets/img/{taban}-900.webp" '
             f'srcset="/assets/img/{taban}-500.webp 500w, /assets/img/{taban}-900.webp 900w'
             + (f', /assets/img/{taban}-1600.webp 1600w' if os.path.exists(os.path.join(KOK, "assets", "img", f"{taban}-1600.webp")) else '')
-            + f'" sizes="{boy}" alt="{e(alt)}" class="{sinif}" width="900" height="600" {yukleme}>')
+            + f'" sizes="{boy}" alt="{e(alt)}" class="{sinif}" width="{g_en}" height="{g_boy}" {yukleme}>')
 
 
 def tel_btn(sinif="btn btn-altin", metin=None):
@@ -102,7 +134,7 @@ def head(baslik, aciklama, yol, gorsel_taban="duvar-kagidi-kaplama", schema=""):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css{surum("/assets/style.css")}">
 {schema}
 </head>
 <body>'''
@@ -256,11 +288,11 @@ def galeri(baslik="Duvar Kağıdı Modelleri", giris=None):
         f'<button type="button" class="gk" data-buyuk="/assets/img/{t}-900.webp" data-alt="{e(a)}" '
         f'aria-label="{e(a)} — büyüt">'
         f'{gorsel(t, a, boy="(min-width:820px) 270px, 45vw")}'
-        f'<span class="gk-ad">{e(a)}</span>'
-        f'<span class="gk-buyut" aria-hidden="true">'
-        f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
-        f'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg></span>'
-        f'</button>' for t, a in mevcut)
+        f'<span class="gk-ad">{e(a)}'
+        f'<svg class="gk-buyut" width="15" height="15" viewBox="0 0 24 24" fill="none" '
+        f'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">'
+        f'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6M11 8.4v5.2M8.4 11h5.2"/></svg>'
+        f'</span></button>' for t, a in mevcut)
     alt = giris or ("Binlerce desen arasından mekânınıza uyanı birlikte seçiyoruz. "
                     "Görsele tıklayın, büyük hâlini görün. Kataloğun tamamını keşifte gösteriyorum.")
     return f'''<div class="bolum-bas"><span class="etiket">Modeller</span><h2>{e(baslik)}</h2>
@@ -350,7 +382,7 @@ def alt_bilgi():
   </div>
 </footer>
 {sabit_ara()}
-<script src="/assets/app.js" defer></script>
+<script src="/assets/app.js{surum("/assets/app.js")}" defer></script>
 </body></html>'''
 
 

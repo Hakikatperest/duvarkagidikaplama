@@ -268,13 +268,15 @@ section.acik{background:var(--beyaz)}
 .galeri .gk:hover{transform:translateY(-5px) scale(1.012);box-shadow:var(--d3)}
 .galeri .gk:focus-visible{outline:3px solid var(--altin);outline-offset:3px}
 .galeri img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
-.galeri .gk-ad{position:absolute;left:0;right:0;bottom:0;padding:30px 14px 11px;color:#fff;font-size:13px;
-  font-weight:700;background:linear-gradient(transparent,rgba(9,16,26,.88))}
-.galeri .gk-buyut{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;
-  background:rgba(9,16,26,.55);backdrop-filter:blur(4px);display:grid;place-items:center;color:#fff;
-  opacity:0;transform:scale(.85);transition:opacity .2s ease,transform .2s ease}
-.galeri .gk-buyut svg{width:17px;height:17px}
-.galeri .gk:hover .gk-buyut,.galeri .gk:focus-visible .gk-buyut{opacity:1;transform:none}
+/* Başlık şeridi ve içindeki büyüteç işareti.
+   ⚠️ İkon köşede yüzen bir rozet DEĞİL, başlığın yanında: köşe rozeti yalnızca
+   hover'da görünüyordu, yani dokunmatik cihazda görselin tıklanabilir olduğuna
+   dair hiçbir ipucu kalmıyordu. Şimdi her cihazda görünüyor ve daha sakin. */
+.galeri .gk-ad{position:absolute;left:0;right:0;bottom:0;padding:30px 13px 11px;color:#fff;font-size:12.5px;
+  font-weight:700;line-height:1.3;background:linear-gradient(transparent,rgba(9,16,26,.88));
+  display:flex;align-items:center;gap:8px}
+.galeri .gk-buyut{flex:0 0 auto;margin-left:auto;opacity:.72;transition:opacity .2s ease,transform .2s ease}
+.galeri .gk:hover .gk-buyut,.galeri .gk:focus-visible .gk-buyut{opacity:1;transform:scale(1.12)}
 
 /* ── Büyütülmüş görsel katmanı ───────────────────────────────────────────── */
 .lb{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;
