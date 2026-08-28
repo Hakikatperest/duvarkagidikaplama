@@ -55,3 +55,44 @@ def uret(log=print):
 
 if __name__ == "__main__":
     uret()
+
+
+def baslik_logosu(log=print):
+    """Menü logosu: slogan şeridi temizlenmiş lockup.
+
+    Kaynak lockup 2087×754. Altındaki ince slogan ("DUVARLARINIZA YENİ BİR
+    HİKÂYE") menü yüksekliğinde 4-5 piksele düşüyor ve okunmuyor — bulanık bir
+    çizgi olarak duruyor. Burada o bant şeffaflaştırılıp görsel kırpılıyor.
+
+    ⚠️ Yazıyı tek başına kırpmak DENENDİ, olmuyor: rulo ikonunun yaprakları
+    "duvarkagidi" yazısının "d" harfine değiyor, aralarında tek piksel boşluk
+    yok. Dikey kesim ya harfi ya ikonu kesiyor. Bu yüzden lockup bütün bırakıldı;
+    menüde büyütülerek okunur hâle getirildi (38px → 64px).
+
+    Logonun kendi oranı da sınır koyuyor: yüksekliğin yalnızca ~%36'sını marka
+    adı kaplıyor, gerisi ikon. Yazıyı daha da büyütmek ancak ikon ve yazıyı ayrı
+    öğeler hâline getirip yeniden dizmekle olur — bu logoyu değiştirmek demek,
+    müşteri onayı gerektirir.
+    """
+    from PIL import Image
+    im = Image.open(os.path.join(KAYNAK, "duvarkagidikaplama.png")).convert("RGBA")
+    W, H = im.size
+
+    IKON_SAGI = int(W * 0.30)                              # rulo ikonu burada biter
+    BANT_UST, BANT_ALT = int(H * 0.76), int(H * 0.88)      # slogan şeridi
+
+    px = im.load()
+    for y in range(BANT_UST, BANT_ALT):
+        for x in range(IKON_SAGI, W):
+            r, g, b, a = px[x, y]
+            if a:
+                px[x, y] = (r, g, b, 0)
+
+    im = im.crop(im.getbbox())
+    for sonek, genislik in (("500", 500), ("900", 900)):
+        oran = min(1.0, genislik / im.width)
+        im.resize((round(im.width * oran), round(im.height * oran)), Image.LANCZOS) \
+          .save(os.path.join(HEDEF, f"logo-{sonek}.webp"), "WEBP", quality=90, method=4)
+
+    log(f"  logo-900.webp  {im.width}×{im.height}  oran {im.width / im.height:.2f}:1")
+    return im.size

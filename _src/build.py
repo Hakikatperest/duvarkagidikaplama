@@ -115,17 +115,29 @@ def ust_header(aktif=""):
     baglar = "".join(f'<a href="{u}">{e(a)}</a>' for u, a in m)
     return f'''
 <div class="ust"><div class="kap">
-  <span>📍 <b>İstanbul'un 39 ilçesinde</b> yerinde uygulama</span>
-  <span>📐 <b>Ücretsiz keşif</b> ve yazılı fiyat</span>
-  <span>🧾 Fiyatlar rulo bazında, <b>net</b></span>
+  <span>İstanbul Geneli</span><i aria-hidden="true"></i>
+  <span>Ücretsiz Keşif</span><i aria-hidden="true"></i>
+  <span>Yazılı Fiyat</span>
 </div></div>
 <header><div class="kap">
   <a class="logo" href="/" aria-label="{e(S["ad"])} ana sayfa">
-    <img src="/assets/img/duvarkagidikaplama-500.webp" alt="{e(S["ad"])} logosu" width="120" height="43">
+    <img src="/assets/img/logo-900.webp" srcset="/assets/img/logo-500.webp 500w, /assets/img/logo-900.webp 900w"
+         sizes="181px" alt="{e(S["ad"])} logosu" width="181" height="64" fetchpriority="high">
   </a>
   <button class="mnu" aria-label="Menü" aria-expanded="false"><span></span><span></span><span></span></button>
   <nav class="ana">{baglar}{tel_btn("btn btn-altin btn-sm")}</nav>
 </div></header>'''
+
+
+def hero_h1(satirlar):
+    """Hero başlığı — her satır kendi maskesinde.
+
+    Satırlar `overflow:hidden` bir kutunun içinden yukarı doğru açılıyor; metin
+    yokken de yeri kaplı olduğu için sayfa oturduktan sonra kayma (CLS) olmaz.
+    Efekt CSS ile; JavaScript kapalıysa başlık son hâlinde durur.
+    """
+    ic = "".join(f'<span class="l"><span>{s}</span></span>' for s in satirlar)
+    return f'<h1 class="hb">{ic}</h1>'
 
 
 def kirinti(parcalar):
@@ -355,7 +367,9 @@ def anasayfa():
   <div class="kap">
     <div class="yazi">
       <span class="ust-etiket">İstanbul'un 39 ilçesinde</span>
-      <h1><span class="el-yazi altin-yazi">Evinize</span>Değer Katan <span class="altin-yazi">Duvarlar</span></h1>
+      {hero_h1(['<span class="el-yazi altin-yazi parla">Evinize</span>',
+                'Değer Katan',
+                '<span class="altin-yazi parla">Duvarlar</span>'])}
       <p class="giris">Duvar kağıdı kaplama, tavan kaplama ve dijital özel baskı poster.
       Ölçüyü yerinde alıyorum, kaç rulo gideceğini ve toplam tutarı <strong style="color:#fff">yazılı</strong>
       veriyorum. Sürpriz fiyat yok.</p>
@@ -568,7 +582,7 @@ def ilce_sayfasi(i):
   <div class="kap">
     <div class="yazi">
       <span class="ust-etiket">{e(ad)} · İstanbul</span>
-      <h1>{e(ad)} <span class="altin-yazi">Duvar Kağıdı Kaplama</span></h1>
+      {hero_h1([e(ad), '<span class="altin-yazi parla">Duvar Kağıdı Kaplama</span>'])}
       <p class="giris">{e(ad)}'de duvar kağıdı mı yaptırmak istiyorsunuz? Size en yakın duvar kağıdı
       ustasını mı arıyorsunuz? Uygun fiyata duvar kaplatmak mı istiyorsunuz? Doğru sayfadasınız.
       Ölçüyü yerinde alıyorum, rakamı yazılı veriyorum.</p>
@@ -765,7 +779,7 @@ def alan_sayfasi(a):
   <div class="kap">
     <div class="yazi">
       <span class="ust-etiket">Kullanım Alanı · İstanbul</span>
-      <h1><span class="altin-yazi">{e(a["h1"])}</span></h1>
+      {hero_h1(['<span class="altin-yazi parla">' + e(a["h1"]) + '</span>'])}
       <p class="giris">{e(a["ozet"])}</p>
       <div class="dugmeler">{tel_btn("btn btn-altin", "Ücretsiz Keşif: " + S["tel"])}{wa_btn()}</div>
     </div>
@@ -1107,7 +1121,7 @@ def rehber_sayfasi(r):
   <div class="kap">
     <div class="yazi">
       <span class="ust-etiket">Rehber</span>
-      <h1><span class="altin-yazi">{e(r["h1"])}</span></h1>
+      {hero_h1(['<span class="altin-yazi parla">' + e(r["h1"]) + '</span>'])}
       <p class="giris">{e(r["ozet"])}</p>
       <div class="dugmeler">{tel_btn("btn btn-altin", "Ücretsiz Keşif: " + S["tel"])}{wa_btn()}</div>
     </div>
