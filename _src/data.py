@@ -36,10 +36,10 @@ FIYAT_GUNCELLEME = "Ağustos 2026"
 
 FIYATLAR = [
     {
-        "grup": "Duvar Kağıdı",
+        "grup": "Standart Duvar Kağıdı",
         "ikon": "rulo",
         "kalemler": [
-            ("Duvar kağıdı satış fiyatı", "3.000 ₺'den başlar", "1 rulo · 15,5 m² · 106 cm en"),
+            ("Satış fiyatı", "3.000 ₺'den başlayan fiyatlarla", "Ölçü: 15,5 m²'ye kadar · Rulo genişliği: 106 cm"),
             ("Duvar kağıdı işçiliği", "1.500 ₺ / rulo", "İşçilik rulo bazında hesaplanır"),
         ],
     },
@@ -47,23 +47,29 @@ FIYATLAR = [
         "grup": "Tavan Duvar Kağıdı",
         "ikon": "tavan",
         "kalemler": [
-            ("Tavan duvar kağıdı satış fiyatı", "4.500 ₺ / rulo", "Tavana özel malzeme ve tutuş"),
-            ("Tavan duvar kağıdı işçiliği", "2.500 ₺ / rulo", "Baş üstü çalışma, iki kişilik uygulama"),
+            ("Satış fiyatı", "4.500 ₺", "Tavana özel malzeme ve tutuş"),
+            ("Tavan işçiliği", "2.500 ₺ / rulo", "Baş üstü çalışma, iki kişilik uygulama"),
         ],
     },
     {
-        "grup": "Dijital Özel Baskı Poster",
+        "grup": "Dijital Özel Baskı / Poster",
         "ikon": "baski",
         "kalemler": [
-            ("Özel baskı poster satış fiyatı", "600 ₺ / m²", "Kendi görselinizle, ölçüye özel baskı"),
-            ("Özel baskı poster işçiliği", "200 ₺ / m²", "m² üzerinden uygulama"),
+            ("Satış ve uygulama", "Keşifle belirlenir", "Özel tasarım ve ölçüye göre fiyatlandırılır"),
+            ("Ücretsiz keşif", "0 ₺", "Ölçü alınır, görsel çözünürlüğü kontrol edilir"),
         ],
     },
 ]
 
-FIYAT_NOTU = ("Fiyatlar bilgilendirme amaçlıdır. Net fiyat, uygulanacak alanın ölçüsüne ve "
-              "seçilecek ürüne göre belirlenir. Ücretsiz keşifte duvarı ölçer, kaç rulo "
-              "gideceğini ve toplam tutarı yazılı olarak veririm.")
+FIYAT_NOTU = ("Fiyatlar bilgilendirme amaçlıdır.")
+
+# Fiyat listesinin altında madde madde geçen notlar (kullanıcının verdiği liste).
+FIYAT_MADDELER = [
+    "Fiyatlar uygulanacak alanın ölçüsüne göre değişiklik gösterebilir.",
+    "Duvarın mevcut durumu işçilik fiyatını etkileyebilir.",
+    "Özel baskı ve özel tasarımlar ayrıca fiyatlandırılır.",
+    "Net fiyat için ücretsiz keşif yapılabilir.",
+]
 
 # 1 rulo = 15,5 m² → hesap makinesi ve örnek hesaplar bu iki sayıdan üretilir.
 RULO_M2 = 15.5
@@ -72,8 +78,6 @@ RULO_SATIS = 3000
 RULO_ISCILIK = 1500
 TAVAN_SATIS = 4500
 TAVAN_ISCILIK = 2500
-POSTER_SATIS = 600
-POSTER_ISCILIK = 200
 
 # ── İstanbul'un 39 ilçesi ────────────────────────────────────────────────────
 # doku : ilçenin yapı stoğu — sayfanın özgün paragrafı buradan doğar.

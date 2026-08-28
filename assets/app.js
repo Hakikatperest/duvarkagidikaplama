@@ -39,7 +39,6 @@
     var d = form.dataset;
     var RULO_M2 = parseFloat(d.ruloM2), RULO = parseFloat(d.ruloSatis), ISC = parseFloat(d.ruloIscilik);
     var TAV = parseFloat(d.tavanSatis), TAVI = parseFloat(d.tavanIscilik);
-    var POS = parseFloat(d.posterSatis), POSI = parseFloat(d.posterIscilik);
 
     var tl = function (n) { return n.toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺'; };
 
@@ -49,20 +48,24 @@
       var tur = form.tur.value;
       var m2 = en * yuk;
       var kutu = document.getElementById('hesapSonuc');
+      var posterNot = document.getElementById('posterNot');
+
+      /* Dijital özel baskının SABİT m² fiyatı yok: özel tasarım ve ölçüye göre
+         belirleniyor. Uydurma rakam göstermek yerine keşfe yönlendiriyoruz. */
+      if (tur === 'poster') {
+        kutu.hidden = true;
+        if (posterNot) posterNot.hidden = false;
+        return;
+      }
+      if (posterNot) posterNot.hidden = true;
 
       if (m2 <= 0) { kutu.hidden = true; return; }
       kutu.hidden = false;
 
-      var satis, iscilik, adetMetni;
-      if (tur === 'poster') {
-        satis = m2 * POS; iscilik = m2 * POSI;
-        adetMetni = m2.toFixed(1).replace('.', ',') + ' m²';
-      } else {
-        var rulo = Math.ceil(m2 / RULO_M2);
-        satis = rulo * (tur === 'tavan' ? TAV : RULO);
-        iscilik = rulo * (tur === 'tavan' ? TAVI : ISC);
-        adetMetni = rulo + ' rulo (' + m2.toFixed(1).replace('.', ',') + ' m²)';
-      }
+      var rulo = Math.ceil(m2 / RULO_M2);
+      var satis = rulo * (tur === 'tavan' ? TAV : RULO);
+      var iscilik = rulo * (tur === 'tavan' ? TAVI : ISC);
+      var adetMetni = rulo + ' rulo (' + m2.toFixed(1).replace('.', ',') + ' m²)';
 
       document.getElementById('sonucAdet').textContent = adetMetni;
       document.getElementById('sonucUrun').textContent = tl(satis);
