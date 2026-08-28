@@ -36,8 +36,11 @@ def uret(log=print):
             im = im.convert("RGBA") if im.mode == "RGBA" else im.convert("RGB")
 
             for sonek, genislik in BOYLAR:
-                if im.width < genislik and sonek != "500":
-                    continue   # kaynaktan büyütme yok
+                # Kaynaktan BÜYÜTME yok ama türev de atlanmaz: kaynak dar ise
+                # dosya kendi genişliğinde bu adla yazılır. Atlanırsa şablonun
+                # beklediği -900 türevi oluşmuyor ve sayfada kırık görsel çıkıyor.
+                if im.width < genislik and sonek == "1600":
+                    continue
                 oran = min(1.0, genislik / im.width)
                 yeni = im.resize((round(im.width * oran), round(im.height * oran)), Image.LANCZOS)
                 cikti = os.path.join(HEDEF, f"{taban}-{sonek}.webp")
